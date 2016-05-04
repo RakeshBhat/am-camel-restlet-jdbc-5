@@ -21,11 +21,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.springframework.beans.factory.annotation.Value;
 
 public class RestConfig extends RouteBuilder {
-
 
 	@Value("${sql.movedepartmentpatient.day}")
 	private String sqlMovedepartmentpatientDay;
@@ -44,10 +43,11 @@ public class RestConfig extends RouteBuilder {
 		.get().to("direct:getDepartments");
 		from("direct:getDepartments")
 		.setBody(simple("select * from hol2.department"))
-		.to("jdbc:dataSourceHol2Eih");
+		.to("jdbc:dataSourceHol2Eih").marshal().json()
+		;
 
 		rest("/movePatient")
-			.get("/read{year}-{month}-{day}").to("direct:readDayMovePatient")
+			.get("/read-{year}-{month}-{day}").to("direct:readDayMovePatient")
 			.put("/updateMoveDepartmentPatien-{id}-{field}-{value}").to("direct:updateMoveDepartmentPatien");
 
 		from("direct:updateMoveDepartmentPatien")
@@ -60,6 +60,7 @@ public class RestConfig extends RouteBuilder {
 		.setBody(simple(Util.replace(sqlMovedepartmentpatientDay)))
 		.log("\n" + Util.replace(sqlMovedepartmentpatientDay) )
 		.to("jdbc:dataSourceHol2Eih")
+		.marshal().json(JsonLibrary.Jackson)
 		;
 
 		rest("/persons")
