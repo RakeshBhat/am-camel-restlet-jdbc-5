@@ -48,12 +48,18 @@ public class RestConfig extends RouteBuilder {
 
 		rest("/movePatient")
 			.get("/read-{year}-{month}-{day}").to("direct:readDayMovePatient")
-			.put("/updateMoveDepartmentPatien-{id}-{field}-{value}").to("direct:updateMoveDepartmentPatien");
+			.put("/updateMoveDepartmentPatien-{id}-{field}-{value}").to("direct:updateMoveDepartmentPatien")
+			.put("/updateMoveDepartmentPatien-{id}-{field}-").to("direct:updateMoveDepartmentPatienNull");
 
+		from("direct:updateMoveDepartmentPatienNull")
+		.log("update hol2.movedepartmentpatient set ${header.field}=null where movedepartmentpatient_id = ${header.id}")
+		.setBody(simple("update hol2.movedepartmentpatient set ${header.field}=null where movedepartmentpatient_id = ${header.id}"))
+		.to("jdbc:dataSourceHol2Eih")
+		;
 		from("direct:updateMoveDepartmentPatien")
-		.log("update movedepartmentpatient set ${header.field}='${header.value}' where id = ${header.id}")
-//		.setBody(simple("update movedepartmentpatient set ${header.field}='${header.value}' where id = ${header.movedepartmentpatient_id}"))
-//		.to("jdbc:dataSourceHol2Eih")
+		.log("update hol2.movedepartmentpatient set ${header.field}='${header.value}' where movedepartmentpatient_id = ${header.id}")
+		.setBody(simple("update hol2.movedepartmentpatient set ${header.field}='${header.value}' where movedepartmentpatient_id = ${header.id}"))
+		.to("jdbc:dataSourceHol2Eih")
 		;
 
 		from("direct:readDayMovePatient")
