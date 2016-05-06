@@ -36,7 +36,8 @@ public class SampleTomcatJspApplication extends SpringBootServletInitializer {
 	}
 	@Bean
 	public ServletRegistrationBean dispatcherServletRegistrationBean(){
-		ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(dispatcherServlet(),"/ds/*");
+//		ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(dispatcherServlet(),"/ds/*");
+		ServletRegistrationBean servletRegistrationBean = new ServletRegistrationBean(dispatcherServlet(),"/*");
 		servletRegistrationBean.setName(DispatcherServletAutoConfiguration.DEFAULT_DISPATCHER_SERVLET_REGISTRATION_BEAN_NAME);
 		return servletRegistrationBean;
 	}

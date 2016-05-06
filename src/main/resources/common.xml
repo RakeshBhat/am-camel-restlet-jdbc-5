@@ -19,8 +19,7 @@ limitations under the License.
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jdbc="http://www.springframework.org/schema/jdbc"
-		xmlns:util="http://www.springframework.org/schema/util"
-
+		xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
@@ -36,7 +35,7 @@ limitations under the License.
     </jdbc:embedded-database>
  -->
     <!-- this is the JDBC data source  -->
-	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" primary="true">
 	  <property name="driverClassName" value="org.h2.Driver"/>
 	  <property name="url" value="jdbc:h2:tcp://localhost/h2-camel1/h2-camel1"/>
 	  <property name="username" value="sa"/>
@@ -49,5 +48,28 @@ limitations under the License.
 	  <property name="username" value="sa"/>
 	  <property name="password" value=""/>
 	</bean>
+
+	<bean id="dataSourceHol1MySql" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost/hol?useUnicode=true&amp;characterEncoding=utf-8" />
+		<property name="username" value="hol" />
+		<property name="password" value="hol" />
+	</bean>
 	
+	<bean id="mySqlParamJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+		<constructor-arg ref="dataSourceHol1MySql"/>
+	</bean>
+	
+	<bean id="sqlHol1BedDay" class="java.lang.String">
+		<constructor-arg value="${sql.hol1.bedDay}" />
+	</bean>
+	<!-- 
+	<bean id="sqlSpringHol1BedDay" class="java.lang.String">
+		<constructor-arg value="${sql.spring.hol1.bedDay}" />
+	</bean>
+	 -->
+	<bean id="sqlMovedepartmentpatientDay" class="java.lang.String">
+		<constructor-arg value="${sql.movedepartmentpatient.day}" />
+	</bean>
+
 </beans>

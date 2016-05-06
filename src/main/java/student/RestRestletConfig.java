@@ -17,28 +17,26 @@
 
 package student;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.dataformat.JsonLibrary;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public class RestConfig extends RouteBuilder {
+public class RestRestletConfig extends RouteBuilder {
 
-	@Value("${sql.movedepartmentpatient.day}")
-	private String sqlMovedepartmentpatientDay;
-
-	@Value("${sql.movedepartmentpatient.fields}")
-	private String sqlMovedepartmentpatientFields;
+	@Autowired private String sqlMovedepartmentpatientDay;
+	@Autowired private String sqlHol1BedDay;
 
 	@Override
 	public void configure() {
 		System.out.println("----configure---------------------");
-		List<String> items = Arrays.asList(sqlMovedepartmentpatientFields.split("\\s*,\\s*"));
-		System.out.println(items);
-		System.out.println("----configure---------------------");
 	
+		rest("/hol1bedDay-{min_month}-{max_month}-{year}")
+		.get().to("direct:hol1bedDay");
+		from("direct:hol1bedDay")
+		.log("---------------${header.min_month}-${header.max_month}-${header.year}----------")
+		.setBody(simple(Util.replace(sqlHol1BedDay)))
+		.to("jdbc:dataSourceHol1MySql").marshal().json()
+		;
 		rest("/departments")
 		.get().to("direct:getDepartments");
 		from("direct:getDepartments")
